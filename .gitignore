@@ -1,3 +1,4 @@
+node_modules
 node_modules/.bin/css-beautify
 node_modules/.bin/editorconfig
 node_modules/.bin/html-beautify

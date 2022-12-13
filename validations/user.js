@@ -157,9 +157,26 @@ const updateUser = [
     }),
 ];
 
+const deleteUser = [
+  param('id')
+    .notEmpty()
+    .withMessage('Please provide an user id')
+    .isNumeric()
+    .withMessage('Please provide a valid user id')
+    .custom((value) => {
+      return UserModel.findByPk(value).then((user) => {
+        if (!user) {
+          return Promise.reject('User not found!');
+        }
+        return true;
+      });
+    }),
+];
+
 module.exports = {
   createUser,
   login,
   getUserById,
   updateUser,
+  deleteUser,
 };

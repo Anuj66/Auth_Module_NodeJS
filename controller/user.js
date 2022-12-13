@@ -168,4 +168,32 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { createUser, login, getUserById, getAllUsers, updateUser };
+const deleteUser = async (req, res) => {
+  try {
+    const isAdmin = await userHasRole(req.user.id, ADMIN_ROLE_ID);
+    if (!isAdmin) {
+      return res.status(401).json(error('User not Authorized', 401));
+    }
+
+    const userId = req.params.id;
+    if (req.user.id == userId) {
+      return res.status(400).json(error('Admin cannot delete his/her account', 400));
+    }
+    const doUserExists = await UserModel.findByPk(userId);
+    if (!doUserExists) {
+      return res.status(404).json(error('User not found', 404));
+    }
+
+    const deletedUser = await UserModel.destroy({
+      where: {
+        id: userId,
+      },
+    });
+
+    return res.status(200).json(success('Delete Successfully', deletedUser, 200));
+  } catch (err) {
+    return res.status(500).json(error(err.message, 500));
+  }
+};
+
+module.exports = { createUser, login, getUserById, getAllUsers, updateUser, deleteUser };
